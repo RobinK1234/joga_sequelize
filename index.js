@@ -47,6 +47,16 @@ app.get('/',(req, res) => {
 
 })
 
-app.get('/article/:slug')
+app.get('/article/:slug', (req, res) => {
+    const slug = req.params.slug;
+
+    const sql = `SELECT * FROM article WHERE slug = ${mysql.escape(slug)}`;
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        const article = result[0];
+
+        res.render('article', { article });
+    });
+});
 
 
