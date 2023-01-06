@@ -1,7 +1,14 @@
-<h1>Posts by {{author}}</h1>
+{{#author}}
+    <h1>{{name}}</h1>
+{{/author}}
 
-
-{{#each posts}}
-    <h2>{{title}}</h2>
-    <p>{{body}}</p>
-{{/each}}
+<div class="article-list">
+    {{#articles}}
+        <article>
+            <a href="/article/{{slug}}">
+                <img src="/images/{{image}}" alt="">
+            </a>
+            <h2><a href="/article/{{slug}}">{{name}}</a></h2>
+        </article>
+    {{/articles}}
+</div>

@@ -11,8 +11,8 @@ app.set('view engine','hbs')
 app.engine('hbs', hbs.engine({
     extname:'hbs',
     defaultlayout: 'main',
-    layoutsDir: __dirname +'/views/layouts'
-}))
+    layoutsDir: __dirname +'/views/layouts',
+}));
 
 app.use(express.static(path.join(__dirname,'/public/')))
 
@@ -50,13 +50,39 @@ app.get('/',(req, res) => {
 app.get('/article/:slug', (req, res) => {
     const slug = req.params.slug;
 
-    const sql = `SELECT * FROM article WHERE slug = ${mysql.escape(slug)}`;
+    const sql = `SELECT a.*, au.name AS author FROM article a, author au WHERE slug = "${req.params.slug}"AND a.author_id = au.id`;
     con.query(sql, (err, result) => {
         if (err) throw err;
-        const article = result[0];
+        const article = result;
+        console.log(article)
 
         res.render('article', { article });
     });
 });
+
+app.get('/author/:author_id', (req, res) => {
+    const author_id = req.params.author_id;
+
+    let sql = `SELECT * FROM article WHERE author_id = ${author_id}`;
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        const articles = result;
+        sql = `SELECT * FROM author WHERE id = ${author_id}`
+        con.query(sql, (err, result) => {
+            let author = result
+            console.log(articles)
+            console.log(author)
+            res.render('author', {
+                articles: articles,
+                author: author
+            });
+        })
+    });
+});
+
+
+
+
+
 
 
