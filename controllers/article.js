@@ -1,39 +1,5 @@
+const con = require('../utils/db')
 
-
-const getAllArticles = (req, res) => {
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
 const getAllArticles = (req, res) => {
     let query = "SELECT * FROM article";
     let articles = []
@@ -44,19 +10,26 @@ const getAllArticles = (req, res) => {
             articles: articles
         })
     })
-};
-const getArticleBySlug = (req, res) =>{
-    let query = `SELECT *, article.name as article_name, author.name as author_name FROM article INNER JOIN author ON author.id = article.author_id WHERE slug="${req.params.slug}"`
-        let article
-    con.query(query, (err,result) => {
-        if (err) throw err;
+}
+const getArticlesBySlug = (req, res) => {
+    let query = `select a.*,
+                        au.name as author,
+                        au.id   as author_id
+                 from article a,
+                      author au
+                 where slug = "${req.params.slug}"
+                   and a.author_id = au.id`
+    let article
+    con.query(query, (err, result) => {
+        if (err) throw err
         article = result
-        console.log(article)
         res.render('article', {
             article: article
         })
-    });
-};
+    })
+}
 
-
- */
+module.exports = {
+    getAllArticles,
+    getArticlesBySlug
+}
