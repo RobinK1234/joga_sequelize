@@ -24,6 +24,7 @@ const authorRoutes = require('./routes/author')
 app.use('/', articleRoutes)
 app.use('/article', articleRoutes)
 app.use('/author', authorRoutes)
+
 app.listen(3000, () => {
-    console.log("App is started at http://localhost:3007")
+    console.log("App is started at http://localhost:3000")
 })
