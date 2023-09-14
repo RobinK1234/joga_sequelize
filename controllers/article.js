@@ -18,22 +18,16 @@ const getAllArticles = (req, res) => {
 
 //show article by slug
 const getArticlesBySlug = (req, res) => {
-    let query = `select a.*,
-                        au.name as author,
-                        au.id   as author_id
-                 from article a,
-                      author au
-                 where slug = "${req.params.slug}"
-                   and a.author_id = au.id`
-    let article
-    con.query(query, (err, result) => {
-        if (err) throw err
-        article = result
-        res.render('article', {
-            article: article
-        })
+    Article.getBySlug(req.params.slug, (err, data) => {
+        if (err) {
+            res.status(500).send({
+                message : err.message || 'Big error whilst retrieving article data'
+            })
+        } else {
+            console.log(data)
+        }
     })
-}
+};
 
 module.exports = {
     getAllArticles,
