@@ -1,29 +1,24 @@
-const con = require('../utils/db')
+// import database connection
+const Author = require('../models/author.model')
 
 
+// show author articles
 const getAuthorArticles = (req, res) => {
-    let query = `select *
-                 from article
-                 where author_id = "${req.params.id}"`
-    let articles
-    let author
-    con.query(query, (err, result) => {
-        if (err) throw err
-        articles = result
-        console.log(result)
-        query = `Select *
-                 from author
-                 where id = "${req.params.id}"`
-        con.query(query, (err, result) => {
-            if (err) throw err
-            author = result
-            console.log(author)
-            res.render('author', {
-                author: author,
-                articles: articles
+    Author.getName(req.params.author_id,(err, author, articles) => {
+        if (err) {
+            res.status(500).send({
+                message :err.message || 'Some error occurred retrieving author data'
             })
-        })
+        } else {
+            console.log(author, articles)
+            res.render('author', {
+                articles: articles,
+                author: author
+            })
+        }
     })
-}
-
-module.exports = {getAuthorArticles}
+};
+// export controller functions
+module.exports = {
+    getAuthorArticles
+};

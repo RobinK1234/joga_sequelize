@@ -1,4 +1,4 @@
-const con = require('../models/article.model')
+const Article = require('../models/article.model')
 
 //show all articles using models
 const getAllArticles = (req, res) => {
@@ -25,6 +25,9 @@ const getArticlesBySlug = (req, res) => {
             })
         } else {
             console.log(data)
+            res.render('article', {
+                article: data
+            })
         }
     })
 };
