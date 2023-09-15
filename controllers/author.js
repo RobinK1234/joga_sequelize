@@ -18,6 +18,7 @@ const getAuthorArticles = (req, res) => {
         }
     })
 };
+
 // export controller functions
 module.exports = {
     getAuthorArticles
