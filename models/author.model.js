@@ -1,5 +1,5 @@
 //db connection
-const con =require('../utils/db');
+const con = require('../utils/db');
 
 //constructor
 
@@ -12,6 +12,7 @@ Author.getName = (author_id, result) => {
     let article_query = `SELECT * FROM article, author WHERE author.id='${author_id}' AND article.author_id=author.id;`
 
     let author_query = `SELECT author_name FROM author WHERE author.id=\'${author_id}';`
+
     let author
     let articles = []
 
