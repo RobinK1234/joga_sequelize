@@ -53,13 +53,20 @@ const createNewArticle = (req, res) => {
             })
         } else {
             console.log(data)
-            res.send(data)
+            res.redirect('/')
         }
     })
 }
+
+//display article form
+const showNewArticleForm = (req, res) => {
+    res.render('create_article')
+}
+
 // export controller functions
 module.exports = {
     getAllArticles,
     getArticlesBySlug,
     createNewArticle,
+    showNewArticleForm
 };
