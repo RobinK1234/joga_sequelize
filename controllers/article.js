@@ -32,7 +32,34 @@ const getArticlesBySlug = (req, res) => {
     })
 };
 
+const createNewArticle = (req, res) => {
+    // new article from POST data (example from form)
+    console.log('new article')
+
+    const newArticle = new Article({
+        name: req.body.name,
+        slug: req.body.slug,
+        image: req.body.image,
+        body: req.body.body,
+        published: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        author_id: req.body.author_id
+    })
+
+
+    Article.createNew(newArticle, (err, data) => {
+        if (err) {
+            res.status(500).send({
+                message: err.message || 'Some error occured sending article data'
+            })
+        } else {
+            console.log(data)
+            res.send(data)
+        }
+    })
+}
+// export controller functions
 module.exports = {
     getAllArticles,
-    getArticlesBySlug
-}
+    getArticlesBySlug,
+    createNewArticle,
+};
