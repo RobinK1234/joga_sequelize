@@ -18,8 +18,8 @@ const getAllArticles = (req, res) => {
 
 //show article by slug
 const getArticlesBySlug = (req, res) => {
-    Article.getBySlug(req.params.slug, (err, data) => {
-        if (err) {
+    Article.getBySlug( (err, data) => {
+        if (err) {req.params.slug,
             res.status(500).send({
                 message : err.message || 'Big error whilst retrieving article data'
             })
@@ -81,7 +81,7 @@ const updateArticle = (req, res) => {
             slug: req.body.slug,
             image: req.body.image,
             body: req.body.body,
-            author_id: req.body.author
+            author_id: req.body.author_id,
         })
         Article.editArticle(req.params.id, editedArticle, (err, data) => {
             if (err) {
@@ -101,6 +101,8 @@ const updateArticle = (req, res) => {
 const showNewArticleForm = (req, res) => {
     res.render('create_article')
 }
+
+
 
 // export controller functions
 module.exports = {

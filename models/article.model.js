@@ -100,8 +100,8 @@ Article.showArticle = (articleId, result) => {
     })
 }
 Article.editArticle = (articleId, editedArticle, result) => {
-    let query = `UPDATE article
-                 SET name      = "${editedArticle.name}",
+    let query = `UPDATE article SET 
+                     name      = "${editedArticle.name}",
                      slug      = "${editedArticle.slug}",
                      image     = "${editedArticle.image}",
                      body      = "${editedArticle.body}",
