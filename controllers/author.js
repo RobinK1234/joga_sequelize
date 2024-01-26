@@ -1,25 +1,42 @@
-// import database connection
-const Author = require('../models/author.model')
+// Get connection to database ORM object
+const Sequelize = require("sequelize");
+const sequelize = new Sequelize('mysql://user:qwerty@localhost:3306/joga_sequelize');
 
+const models = require('../models')
 
-// show author articles
-const getAuthorArticles = (req, res) => {
-    Author.getName(req.params.id,(err, author, articles) => {
-        if (err) {
-            res.status(500).send({
-                message :err.message || 'Big error go boom'
-            })
-        } else {
-            console.log(author, articles)
-            res.render('author', {
-                articles: articles,
-                author: author
-            })
-        }
+const Author = require('../models/author')(sequelize, Sequelize.DataTypes)
+
+const getArticlesByAuthorId = (req, res) => {
+    console.log('hello')
+    models.Author.findAll({
+        where: {
+            author_id: req.params.id
+        },
+        include: [{
+            model: models.Article
+        }],
     })
-};
+        .then(articles => {
+            console.log(articles)
+            return res.status(200).json({articles})
+        })
+        .catch(error => {
+            return res.status(500).send(error.message)
+        })
+}
 
-// export controller functions
+const getAuthors = (req, res) => {
+    models.Author.findAll()
+        .then(authors => {
+            console.log(authors)
+            return res.status(200).json({authors})
+        })
+        .catch(error => {
+            return res.status(500).send(error.message)
+        })
+}
+
 module.exports = {
-    getAuthorArticles
-};
+    getArticlesByAuthorId,
+    getAuthors
+}

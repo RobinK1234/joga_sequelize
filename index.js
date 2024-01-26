@@ -1,31 +1,36 @@
-const express = require('express')
-const app = express()
-const path = require('path')
-const hbs = require('express-handlebars')
-app.use(express.urlencoded({ extended: true}));
+const express = require("express")
+const app = express();
 
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'hbs')
-app.engine('hbs', hbs.engine({
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-    extname: 'hbs',
-    defaultLayout: 'main',
-    layoutsDir: __dirname + '/views/layouts'
-})
-)
-app.use(express.static(path.join(__dirname, '/public')))
+const { Sequelize } = require('sequelize');
+const sequelize = new Sequelize('mysql://root:qwerty@localhost:3306/joga_sequelize')
 
-const bodyParser = require('body-parser')
+sequelize
+    .authenticate()
+    .then(() => {
+        console.log('Connected to the database');
+    })
+    .catch(err => {
+        console.error('Unable to connect to the database', err); // Add a comma here
+    });
 
-app.use(bodyParser.urlencoded({extended: true}))
+const articleRouter = require('./routes/article');
+const authorRouter = require('./routes/author');
+app.use('/', articleRouter);
 
-const articleRoutes = require('./routes/article')
-const authorRoutes = require('./routes/author')
+app.use('/', authorRouter);
 
-app.use('/', articleRoutes)
-app.use('/article', articleRoutes)
-app.use('/author', authorRoutes)
+app.use('/article', articleRouter)
+app.use('/admin/article', articleRouter)
 
-app.listen(3003, () => {
-    console.log("App is started at http://localhost:3003")
-})
+// simple route
+app.get("/", (req,res) => {
+    res.json({message: "Welcome to sequelize application."});
+});
+
+// listen requests
+app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000');
+});

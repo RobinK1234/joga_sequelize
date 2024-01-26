@@ -1,114 +1,49 @@
-const Article = require('../models/article.model')
+const Sequelize = require("sequelize");
+const sequelize = new Sequelize('mysql://user:qwerty@localhost:3306/joga_sequelize');
 
-//show all articles using models
+const models = require('../models');
+const Article = require('../models/article')(sequelize, Sequelize.DataTypes);
+
 const getAllArticles = (req, res) => {
-    Article.getAll((err,data) => {
-        if (err) {
-            res.status(500).send({
-                message : err.message || 'Big error go boom'
-            })
-        } else {
-            console.log(data)
-            res.render('index', {
-                articles:data
-            })
-        }
-    })
-}
-
-//show article by slug
-const getArticlesBySlug = (req, res) => {
-    Article.getBySlug( (err, data) => {
-        if (err) {req.params.slug,
-            res.status(500).send({
-                message : err.message || 'Big error whilst retrieving article data'
-            })
-        } else {
-            console.log(data)
-            res.render('article', {
-                article: data
-            })
-        }
-    })
-};
-
-const createNewArticle = (req, res) => {
-    // new article from POST data (example from form)
-    console.log('new article')
-
-    const newArticle = new Article({
-        name: req.body.name,
-        slug: req.body.slug,
-        image: req.body.image,
-        body: req.body.body,
-        published: new Date().toISOString().slice(0, 19).replace('T', ' '),
-        author_id: req.body.author_id
-    })
-
-
-    Article.createNew(newArticle, (err, data) => {
-        if (err) {
-            res.status(500).send({
-                message: err.message || 'Some error occured sending article data'
-            })
-        } else {
-            console.log(data)
-            res.redirect('/')
-        }
-    })
-}
-
-const updateArticle = (req, res) => {
-    console.log(req.method)
-    console.log('update article')
-    if (req.method === 'GET') {
-        Article.showArticle(req.params.id, (err, article, author) => {
-            if (err) {
-                res.status(500).send({
-                    message: err.message || 'An error occurred retrieving article data'
-                })
-            } else {
-                console.log(article, author)
-                res.render('edit_article', {
-                    article: article,
-                    author: author
-                })
-            }
+    Article.findAll()
+        .then(articles => {
+            console.log(articles)
+            return res.status(200).json({articles});
         })
-    } else if (req.method === "POST") {
-        const editedArticle = new Article({
-            name: req.body.name,
-            slug: req.body.slug,
-            image: req.body.image,
-            body: req.body.body,
-            author_id: req.body.author_id,
+        .catch (error => {
+            return res.status(500).send(error.message);
         })
-        Article.editArticle(req.params.id, editedArticle, (err, data) => {
-            if (err) {
-                res.status(500).send({
-                    message: err.message || 'An error occurred retrieving article data'
-                })
-            } else {
-                console.log(data)
-                res.redirect(`/article/${editedArticle.slug}`)
-            }
-        })
-    }
 }
 
 
-//display article form
-const showNewArticleForm = (req, res) => {
-    res.render('create_article')
+const getArticleBySlug = (req, res) => {
+    models.Article.findOne({
+        where: {
+            slug : req.params.slug
+        },
+        include: [
+            {
+                model: models.Author
+            },
+            {
+                model: models.Tag,
+                through: {
+                    model: models.ArticleTag
+                }
+            }],
+    })
+        .then(article =>  {
+            console.log(article)
+            return res.status(200).json({article})
+        })
+        .catch (error => {
+            return res.status(500).send(error.message);
+        })
 }
 
 
-
-// export controller functions
+//export controller functions
 module.exports = {
     getAllArticles,
-    getArticlesBySlug,
-    createNewArticle,
-    showNewArticleForm,
-    updateArticle,
+    getArticleBySlug
 };
